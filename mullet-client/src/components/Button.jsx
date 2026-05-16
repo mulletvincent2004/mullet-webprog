@@ -1,38 +1,31 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
-const variantClasses = {
-    primary: 'bg-zinc-900 text-zinc-50 hover:bg-zinc-700',
-    secondary: 'bg-zinc-50 text-zinc-900 hover:bg-zinc-200',
-};
+const Button = ({ children, variant = 'primary', type = 'button', className = '', onClick, to }) => {
+  const base = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none cursor-pointer';
 
-const Button = ({
-    children,
-    to,
-    type = 'button',
-    variant = 'secondary',
-    className = '',
-}) => {
-    const classes = [
-        'inline-flex items-center justify-center rounded-full border-2 border-zinc-900 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition',
-        variantClasses[variant] ?? variantClasses.secondary,
-        className,
-    ]
-    .join(' ')
-    .trim();
+  const variants = {
+    primary: 'bg-purple-700 text-white border-2 border-purple-700 rounded-full px-6 py-2 hover:bg-purple-900 hover:border-purple-900',
+    secondary: 'bg-white text-purple-700 border-2 border-white rounded-full px-6 py-2 hover:bg-purple-50 hover:text-purple-900',
+    outline: 'bg-transparent text-purple-700 border-2 border-purple-700 rounded-full px-6 py-2 hover:bg-purple-700 hover:text-white',
+    ghost: 'bg-transparent text-purple-700 rounded-full px-6 py-2 hover:bg-purple-100',
+    danger: 'bg-red-600 text-white border-2 border-red-600 rounded-full px-6 py-2 hover:bg-red-700',
+  };
 
-    if (to) {
-        return (
-            <Link to={to} className={classes}>
-                {children}
-            </Link>
-        );
-    }
+  const classes = `${base} ${variants[variant] || variants.primary} ${className}`;
 
+  if (to) {
     return (
-        <button type={type} className={classes}>
-            {children}
-        </button>
+      <Link to={to} className={classes}>
+        {children}
+      </Link>
     );
+  }
+
+  return (
+    <button type={type} onClick={onClick} className={classes}>
+      {children}
+    </button>
+  );
 };
 
 export default Button;

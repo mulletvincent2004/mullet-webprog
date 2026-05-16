@@ -1,46 +1,49 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import Layout from './components/Layout';
-import './assets/styles/index.css';
+// HomePage Structure
+import Layout from './layouts/Layout';
+import ArticlePage from './pages/ArticlePage';
+import HomePage from './pages/Homepage';
 import AboutPage from './pages/AboutPage';
 import ArticleListPage from './pages/ArticleListPage';
-import ArticlePage from './pages/ArticlePage';
-import HomePage from './pages/HomePage';
+
+import AuthLayout from './layouts/AuthLayout';
+import SignInPage from './pages/AuthPages/SignInPage';
+import SignUpPage from './pages/AuthPages/SignUpPage';
+
 import NotFoundPage from './pages/NotFoundPage';
- 
-const routes = [{
-  path: '/',
-  element: <Layout />,
-  // Error element
-  errorElement: <NotFoundPage />,
-  children: [{
-    // Path declaration
+
+const routes = [
+  {
     path: '/',
-    element: <HomePage />
+    element: <Layout />,
+    errorElement: <NotFoundPage />,
+    children: [
+      { path: '', element: <HomePage /> },
+      { path: 'about', element: <AboutPage /> },
+      { path: 'articles', element: <ArticleListPage /> },
+      { path: 'articles/:name', element: <ArticlePage /> },
+    ],
   },
   {
-    path: '/about',
-    element: <AboutPage />
+    path: "auth/",
+    element: <AuthLayout />,
+    errorElement: <NotFoundPage />,
+    children: [
+      { path: "signin", element: <SignInPage /> },
+      { path: "signup", element: <SignUpPage /> },
+    ],
   },
-  {
-    path: '/articles',
-    element: <ArticleListPage />
-  },
-  {
-    path: '/articles/:name', // -->articles/learn-react
-    element: <ArticlePage />
-  }
-  ]
-}]
- 
+];
+
 const router = createBrowserRouter(routes);
- 
+
 function App() {
   return (
-<>
-<RouterProvider router={router} />
-</>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
- 
+
 export default App;
