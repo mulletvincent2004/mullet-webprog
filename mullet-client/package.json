@@ -17,6 +17,7 @@
     "@mui/x-charts": "^6.19.8",
     "@mui/x-data-grid": "^6.20.4",
     "@tailwindcss/vite": "^4.2.2",
+    "axios": "^1.16.1",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -34,5 +35,10 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "vite": "^8.0.3"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

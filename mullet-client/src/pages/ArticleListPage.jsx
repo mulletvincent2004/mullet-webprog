@@ -1,9 +1,57 @@
+import { useState, useEffect } from 'react';
 import Button from '../components/Button';
 import ArticleList from '../components/ArticleList';
-import articles from '../assets/styles/article-content.js';
 import marketing from '../assets/styles/marketing.jpg';
+import { fetchArticles } from '../services/ArticleService';
+import biglogo from '../assets/styles/biglogo.jpg';
+import logo from '../assets/styles/a1.jpg';
+import rob from '../assets/styles/rob.jpg';
+import mango from '../assets/styles/Mango.jpg';
+import thumbler from '../assets/styles/Thumbler.jpg';
+import OG from '../assets/styles/chocomousse.jpg';
+import fish from '../assets/styles/Fish.jpg';
+
+const imageMap = {
+  'team-eton-staff': logo,
+  'meet-our-marketing-team': marketing,
+  'smile-every-sip': rob,
+  'tealive-company-members': biglogo,
+  'mango-mvp': mango,
+  'tealive-thumbler': thumbler,
+  'og-chocomousse': OG,
+  'fish-katsu': fish,
+};
 
 const ArticleListPage = () => {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        const { data } = await fetchArticles();
+        const activeArticles = data.articles
+          .filter((a) => a.isActive)
+          .map((a) => ({
+            name: a.slug,
+            title: a.title,
+            content: a.paragraphs,
+            image: a.image
+              ? `http://localhost:5000${a.image}`
+              : imageMap[a.slug] || null,
+            _id: a._id,
+          }));
+        setArticles(activeArticles);
+      } catch (err) {
+        setError('Failed to load articles.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadArticles();
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-6">
       {/* Hero Section */}
@@ -42,7 +90,10 @@ const ArticleListPage = () => {
           </span>
           <h2 className="mt-2 text-2xl font-semibold text-zinc-900">Article card grid</h2>
         </div>
-        <ArticleList articles={articles} />
+
+        {loading && <p className="text-zinc-500">Loading articles...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && !error && <ArticleList articles={articles} />}
       </section>
     </div>
   );

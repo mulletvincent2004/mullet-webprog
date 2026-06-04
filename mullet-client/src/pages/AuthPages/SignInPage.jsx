@@ -1,10 +1,40 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import { loginUser } from '../../services/UserService';
 
 const inputClasses =
   'mt-1 w-full rounded-xl border-2 border-purple-200 bg-purple-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-purple-700 focus:bg-white focus:ring-2 focus:ring-purple-700/10';
 
 const SignInPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await loginUser({ email, password });
+
+      // Enhancement 1 — Viewers cannot log in
+      if (data.type === 'viewer') {
+        setError('Viewers are not allowed to log in.');
+        return;
+      }
+
+      // Save user info to localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', data.firstName);
+      localStorage.setItem('type', data.type);
+
+      // Navigate to dashboard
+      navigate('/dashboard', { state: { firstName: data.firstName, type: data.type } });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    }
+  };
+
   return (
     <>
       <div className="mb-8">
@@ -17,15 +47,39 @@ const SignInPage = () => {
         </p>
       </div>
 
-      <form className="space-y-5">
+      {error && (
+        <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      <form className="space-y-5" onSubmit={handleLogin}>
         <div>
           <label htmlFor="signin-email" className="text-sm font-semibold text-zinc-700">Email Address</label>
-          <input id="signin-email" type="email" placeholder="you@example.com" autoComplete="email" className={inputClasses} />
+          <input
+            id="signin-email"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            className={inputClasses}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
 
         <div>
           <label htmlFor="signin-password" className="text-sm font-semibold text-zinc-700">Password</label>
-          <input id="signin-password" type="password" placeholder="••••••••" autoComplete="current-password" className={inputClasses} />
+          <input
+            id="signin-password"
+            type="password"
+            placeholder="••••••••"
+            autoComplete="current-password"
+            className={inputClasses}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <p className="mt-2 text-xs leading-5 text-zinc-400">Must be a combination of minimum 8 letters, numbers, and symbols.</p>
         </div>
 
